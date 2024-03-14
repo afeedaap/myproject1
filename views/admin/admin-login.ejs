@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Regal Admin</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+        <div class="row flex-grow">
+          <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="auth-form-transparent text-left p-3">
+              <div class="brand-logo">
+                <img src="/public/user/images/logo/logo-black.png" alt="logo">
+              </div>
+              <h4>Welcome back!</h4>
+              <h6 class="font-weight-light">Happy to see you again!</h6>
+              <form class="pt-3">
+                <div class="form-group">
+                  <label for="exampleInputEmail">email</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="mdi mdi-account-outline text-primary"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control form-control-lg border-left-0" id="email" placeholder="email" id="email" name="email">
+                  </div>
+                  <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword">Password</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="mdi mdi-lock-outline text-primary"></i>
+                      </span>
+                    </div>
+                    <input type="password" class="form-control form-control-lg border-left-0" id="password" placeholder="Password" name="password">                        
+                  </div>
+                  <div class="error-message" id="password-error"></div>
+                </div>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <div class="form-check">
+                    <label class="form-check-label text-muted">
+                      <input type="checkbox" class="form-check-input">
+                      Keep me signed in
+                    </label>
+                  </div>
+                  <a href="#" class="auth-link text-black">Forgot password?</a>
+                </div>
+                <div class="my-3">
+                  <button type="submit" id="admin-log-submit">login</button>
+                </div>
+               
+                <div class="text-center mt-4 font-weight-light">
+                  Don't have an account? <a href="/sign-up" class="text-primary">Create</a>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-6 login-half-bg d-flex flex-row">
+            <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2020  All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- base:js -->
+  <script src="vendors/base/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script>
+
+    const inputs = document.querySelectorAll('input')
+    const emailMessage = document.getElementById('email-error')
+    const passwordMessage = document.getElementById('password-error')
+
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            emailMessage.textContent = ""
+            passwordMessage.textContent = ""
+        })
+    })
+
+</script>
+<script>
+  document.getElementById('admin-log-submit').addEventListener('click',function(e){
+    e.preventDefault()
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const emailMessage = document.getElementById('email-error')
+    const passwordMessage = document.getElementById('password-error')
+    $.ajax({
+        url:'/admin/login',
+        data:{
+            email:email,
+            password:password,
+        },
+        method:"post",
+        success: (response)=>{
+
+          console.log("in ajax route")
+
+            if ((response.require)) {
+              emailMessage.style.display = "block";
+              emailMessage.textContent = "Pleas fill this field."
+              }else if(response.passrequire){
+                passwordMessage.style.display = "block";
+                passwordMessage.textContent = "Pleas fill this field."
+              }else if(response.emailspace){
+                emailMessage.style.display = "block";
+                emailMessage.textContent = " Email can't contains spaces."
+              }else if(response.passwordspace){
+                passwordMessage.style.display = "block";
+                passwordMessage.textContent = "password can't contains spaces."
+              }else if(response.emailPatt){
+                emailMessage.style.display = "block";
+                emailMessage.textContent = "Enter the valid email address."
+              }else if(response.emailnot){
+                emailMessage.style.display = "block";
+                emailMessage.textContent = " You can't get access in this email."
+              }else if(response.wrongpass){
+                passwordMessage.style.display = "block";
+                passwordMessage.textContent = "  Incorrect password."
+              }else if(response.notregister){
+                emailMessage.style.display = "block";
+                emailMessage.textContent = "  Mail not registered."
+              }else{
+                window.location.href = "/admin/home"
+              }
+
+        },
+    })
+
+})
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <!-- endinject -->
+</body>
+
+</html>
